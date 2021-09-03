@@ -20,6 +20,7 @@ const port = process.env.PORT || 5000
 app.use('/api/user', require('./routes/user.route'))
 app.use('/api/auth', require('./routes/auth.route'))
 app.use('/api/link', require('./routes/link.route'))
+app.use('/api/file', require('./routes/file.route'))
 
 // iniciar al app
 app.listen(port, () => {

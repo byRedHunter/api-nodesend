@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken')
 require('dotenv').config({ path: '.env' })
 const User = require('../models/User')
 const { resError, resSuccess } = require('../utils/response')
+const { verifyValidator } = require('../utils/validators')
 
 exports.authUser = async (req, res) => {
 	// revisar si hay errores
