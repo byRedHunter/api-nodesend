@@ -1,3 +1,4 @@
+const fs = require('fs')
 const multer = require('multer')
 const shortid = require('shortid')
 const { resSuccess } = require('../utils/response')
@@ -37,4 +38,12 @@ exports.uploadFile = async (req, res, next) => {
 	})
 }
 
-exports.deleteFile = async (req, res) => {}
+exports.deleteFile = async (req, res) => {
+	try {
+		fs.unlinkSync(__dirname + `/../uploads/${req.file}`)
+		console.log('archvio eliminado')
+	} catch (error) {
+		console.log('ERROR AL ELIMINAR ARCHIVO')
+		console.log(error)
+	}
+}

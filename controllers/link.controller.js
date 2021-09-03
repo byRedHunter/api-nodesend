@@ -40,3 +40,32 @@ exports.newLink = async (req, res) => {
 		return resError(res, 500, 'Error al crear link.')
 	}
 }
+
+// obtener el enlace
+exports.getLinkFile = async (req, res, next) => {
+	const { url } = req.params
+
+	// verificar si existe el enlace
+	const link = await Link.findOne({ url: url })
+
+	// si no existe el enlace
+	if (!link) return resError(res, 404, 'Este enlace no existe')
+
+	if (link.downloads === 1) {
+		// si las descargas es igual a 1 - borrar la entrada y borrar el archivo
+		req.file = link.name
+
+		// eliminar archivo
+		// eliminad doc en la db
+		await Link.findOneAndRemove(url)
+
+		next() // pasamos al controlador de file.deleteFile()
+	} else {
+		// si las descargas son > 1 - restar 1 a downloads
+		link.downloads--
+		await link.save()
+	}
+
+	// si existe el enlace
+	return resSuccess(res, { file: link.name })
+}
