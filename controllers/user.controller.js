@@ -1,12 +1,10 @@
 const bcrypt = require('bcrypt')
-const { validationResult } = require('express-validator')
 const User = require('../models/User')
-const { resError, resSuccess, resValidator } = require('../utils/response')
+const { resError, resSuccess } = require('../utils/response')
 
 exports.newUser = async (req, res) => {
 	// verificar errores de express-validator
-	const errors = validationResult(req)
-	if (!errors.isEmpty()) return resValidator(res, { errors: errors.array() })
+	verifyValidator(req, res)
 
 	try {
 		const { email, password } = req.body

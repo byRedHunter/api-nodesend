@@ -1,4 +1,10 @@
-const { check } = require('express-validator')
+const { check, validationResult } = require('express-validator')
+const { resValidator } = require('./response')
+
+exports.verifyValidator = (req, res) => {
+	const errors = validationResult(req)
+	if (!errors.isEmpty()) return resValidator(res, { errors: errors.array() })
+}
 
 exports.checkUser = [
 	check('name', 'El nombre es obligatorio.').not().isEmpty(),
@@ -12,4 +18,9 @@ exports.checkUser = [
 exports.checkAuthUser = [
 	check('email', 'No es un correo válido').isEmail(),
 	check('password', 'Ingrese su contraseña por favor.').not().isEmpty(),
+]
+
+exports.checkCreateLink = [
+	check('name', 'Suba un archivo.').not().isEmpty(),
+	check('originalName', 'Suba un archivo.').not().isEmpty(),
 ]

@@ -1,14 +1,12 @@
 const bcrypt = require('bcrypt')
-const { validationResult } = require('express-validator')
 const jwt = require('jsonwebtoken')
 require('dotenv').config({ path: '.env' })
 const User = require('../models/User')
-const { resError, resSuccess, resValidator } = require('../utils/response')
+const { resError, resSuccess } = require('../utils/response')
 
 exports.authUser = async (req, res) => {
 	// revisar si hay errores
-	const errors = validationResult(req)
-	if (!errors.isEmpty()) return resValidator(res, { errors: errors.array() })
+	verifyValidator(req, res)
 
 	// buscar usuario si esta registrado
 	const { email, password } = req.body
@@ -37,5 +35,9 @@ exports.authUser = async (req, res) => {
 }
 
 exports.isUserAuth = async (req, res) => {
-	return resSuccess(res, req.user)
+	const user = req.user
+
+	if (user) return resSuccess(res, req.user)
+
+	return resError(res, 401, 'Debe de autenticarse.')
 }
