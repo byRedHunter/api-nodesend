@@ -9,11 +9,11 @@ exports.newLink = async (req, res) => {
 	verifyValidator(req, res)
 
 	// crear el objeto Link
-	const { originalName } = req.body
+	const { originalName, name } = req.body
 
 	const link = new Link()
 	link.url = shortid.generate()
-	link.name = shortid.generate()
+	link.name = name
 	link.originalName = originalName
 
 	// si el usuario esta autenticado
