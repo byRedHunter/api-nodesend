@@ -41,6 +41,39 @@ exports.newLink = async (req, res) => {
 	}
 }
 
+// retorna si el enlace tiene password
+exports.hasPassword = async (req, res, next) => {
+	const { url } = req.params
+
+	// verificar si existe el enlace
+	const link = await Link.findOne({ url: url })
+
+	// si no existe el enlace
+	if (!link) return resError(res, 404, 'Este enlace no existe')
+
+	if (link.password) return resSuccess(res, { password: true, link: link.url })
+
+	next()
+}
+
+// verificar password
+exports.verifyPassword = async (req, res, next) => {
+	const { url } = req.params
+
+	// consultar
+	const link = await Link.findOne({ url })
+
+	// verificar password
+	const { password } = req.body
+
+	if (bcrypt.compareSync(password, link.password)) {
+		// permitimos descar el archivo
+		next()
+	} else {
+		return resError(res, 401, 'Ingrese una contraseña válida.')
+	}
+}
+
 // obtener el enlace
 exports.getLinkFile = async (req, res, next) => {
 	const { url } = req.params
@@ -51,7 +84,7 @@ exports.getLinkFile = async (req, res, next) => {
 	// si no existe el enlace
 	if (!link) return resError(res, 404, 'Este enlace no existe')
 
-	resSuccess(res, { file: link.name })
+	resSuccess(res, { file: link.name, password: false })
 
 	next()
 
