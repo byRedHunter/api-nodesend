@@ -51,7 +51,11 @@ exports.getLinkFile = async (req, res, next) => {
 	// si no existe el enlace
 	if (!link) return resError(res, 404, 'Este enlace no existe')
 
-	if (link.downloads === 1) {
+	resSuccess(res, { file: link.name })
+
+	next()
+
+	/* if (link.downloads === 1) {
 		// si las descargas es igual a 1 - borrar la entrada y borrar el archivo
 		req.file = link.name
 
@@ -67,5 +71,17 @@ exports.getLinkFile = async (req, res, next) => {
 	}
 
 	// si existe el enlace
-	return resSuccess(res, { file: link.name })
+	return resSuccess(res, { file: link.name }) */
+}
+
+// obtener un listado de todos los enlaces
+exports.getAllLinks = async (req, res) => {
+	try {
+		const links = await Link.find({}).select('url -_id')
+
+		return resSuccess(res, links)
+	} catch (error) {
+		console.log(error)
+		return resError(res, 500, 'Error al crear link.')
+	}
 }

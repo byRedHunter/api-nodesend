@@ -1,6 +1,7 @@
 const fs = require('fs')
 const multer = require('multer')
 const shortid = require('shortid')
+const Link = require('../models/Link')
 const { resSuccess } = require('../utils/response')
 
 exports.uploadFile = async (req, res, next) => {
@@ -38,7 +39,33 @@ exports.uploadFile = async (req, res, next) => {
 	})
 }
 
+exports.downloadFile = async (req, res, next) => {
+	// obtener enlace
+	const { file } = req.params
+	const link = await Link.findOne({ name: file })
+
+	const fileToDownload = __dirname + '/../uploads/' + file
+
+	res.download(fileToDownload)
+
+	if (link.downloads === 1) {
+		// si las descargas es igual a 1 - borrar la entrada y borrar el archivo
+		req.file = link.name
+
+		// eliminar archivo
+		// eliminad doc en la db
+		await Link.findOneAndRemove(link._id)
+
+		next() // pasamos al controlador de file.deleteFile()
+	} else {
+		// si las descargas son > 1 - restar 1 a downloads
+		link.downloads--
+		await link.save()
+	}
+}
+
 exports.deleteFile = async (req, res) => {
+	console.log(req.file)
 	try {
 		fs.unlinkSync(__dirname + `/../uploads/${req.file}`)
 		console.log('archvio eliminado')

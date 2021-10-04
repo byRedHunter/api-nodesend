@@ -1,11 +1,17 @@
 const express = require('express')
-const { uploadFile, deleteFile } = require('../controllers/file.controller')
+const {
+	uploadFile,
+	deleteFile,
+	downloadFile,
+} = require('../controllers/file.controller')
 const auth = require('../middleware/auth')
 
 const router = express.Router()
 
 router.post('/', auth, uploadFile)
 
-router.delete('/:id', deleteFile)
+router.get('/:file', downloadFile, deleteFile)
+
+// router.delete('/:id', deleteFile)
 
 module.exports = router

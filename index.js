@@ -16,6 +16,9 @@ app.use(express.urlencoded({ extended: false }))
 // puesto de la app
 const port = process.env.PORT || 5000
 
+// habilitar carpeta publica
+app.use(express.static('uploads'))
+
 // rutas de la app
 app.use('/api/user', require('./routes/user.route'))
 app.use('/api/auth', require('./routes/auth.route'))
